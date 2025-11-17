@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
 
     private static Stage primaryStage;
@@ -19,19 +21,26 @@ public class Main extends Application {
     }
 
     public static void showHomeScene() throws Exception {
-        Parent root = FXMLLoader.load(Main.class.getResource("home.fxml"));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("home.fxml")));
         Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Home - GPA Calculator");
     }
 
     public static void showCalculatorScene() throws Exception {
-        Parent root = FXMLLoader.load(Main.class.getResource("calculator.fxml"));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("calculator.fxml")));
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.setTitle("GPA Calculator");
     }
 
+    // SIMPLE VERSION - Use this one with ResultData class
+    public static void showResultScene() throws Exception {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("result.fxml")));
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("GPA Calculation Results");
+    }
     public static void main(String[] args) {
         launch(args);
     }

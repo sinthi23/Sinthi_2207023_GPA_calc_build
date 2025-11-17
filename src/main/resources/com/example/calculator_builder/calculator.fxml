@@ -12,9 +12,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="30.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calculator_builder.CalculatorController">
-    <children>
-        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="600.0">
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calculator_builder.CalculatorController">
+        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="450.0" prefWidth="600.0">
             <top>
                 <Label text="Add courses for GPA calculation" BorderPane.alignment="CENTER">
                     <font>
@@ -26,7 +25,7 @@
                 </Label>
             </top>
             <center>
-                <GridPane hgap="10.0" vgap="10.0" BorderPane.alignment="CENTER">
+                <GridPane hgap="10.0" maxHeight="250.0" minHeight="250.0" prefHeight="250.0" prefWidth="600.0" vgap="10.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -64,11 +63,14 @@
                 </GridPane>
             </center>
             <bottom>
-                <VBox spacing="20.0" BorderPane.alignment="CENTER">
+                <VBox prefWidth="80.0" spacing="10.0" BorderPane.alignment="CENTER">
                     <Button fx:id="addCourseButton" onAction="#handleAddCourse" prefWidth="150" text="Add Course" />
                     <Button fx:id="calculateButton" disable="true" onAction="#handleCalculateGPA" prefWidth="150" text="Calculate GPA" />
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
                 </VBox>
             </bottom>
         </BorderPane>
-    </children>
+
 </VBox>

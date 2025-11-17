@@ -16,15 +16,15 @@ public class HomeController {
     @FXML
     private void handleStartButton(ActionEvent event) {
         try {
-            // Load Calculator.fxml (same package, so no leading slash)
+
             Parent calculatorRoot = FXMLLoader.load(
                     getClass().getResource("calculator.fxml")
             );
 
-            // Get the current stage from the clicked button
+
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-            // Set new scene
+
             Scene scene = new Scene(calculatorRoot);
             stage.setScene(scene);
             stage.setTitle("GPA Calculator - Add Courses");

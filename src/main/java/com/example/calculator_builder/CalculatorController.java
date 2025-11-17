@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 
 public class CalculatorController {
 
-    // These match your FXML file exactly
     @FXML private TextField courseNameField;
     @FXML private TextField courseCodeField;
     @FXML private TextField creditField;
@@ -17,7 +16,7 @@ public class CalculatorController {
     @FXML private Button addCourseButton;
     @FXML private Button calculateButton;
 
-    // REMOVED: @FXML private TableView<Course> coursesTable; // Since you don't have TableView in your FXML
+
 
     private ObservableList<Course> courses = FXCollections.observableArrayList();
     private double totalCredits = 0;
@@ -27,21 +26,21 @@ public class CalculatorController {
     public void initialize() {
         System.out.println("CalculatorController initialized!");
 
-        // Setup grade options
+
         gradeComboBox.setItems(FXCollections.observableArrayList(
                 "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F"
         ));
 
-        // REMOVED: coursesTable.setItems(courses); // No TableView in your FXML
 
-        // Initially disable calculate button
+
+
         calculateButton.setDisable(true);
     }
 
     @FXML
     private void handleAddCourse() {
         try {
-            // Get input values
+
             String courseName = courseNameField.getText().trim();
             String courseCode = courseCodeField.getText().trim();
             double credit = Double.parseDouble(creditField.getText().trim());
@@ -49,7 +48,7 @@ public class CalculatorController {
             String teacher2 = teacher2Field.getText().trim();
             String grade = gradeComboBox.getValue();
 
-            // Validate input
+
             if (courseName.isEmpty()) {
                 showAlert("Error", "Please enter course name");
                 return;
@@ -59,23 +58,21 @@ public class CalculatorController {
                 return;
             }
 
-            // Create new course
+
             Course course = new Course(courseName, courseCode, (int) credit, teacher1, teacher2, grade);
             courses.add(course);
 
-            // Update total credits
             totalCredits += credit;
 
-            // Clear fields
+
             clearFields();
 
-            // Enable calculate button if target reached
+
             if (totalCredits >= TARGET_CREDITS) {
                 calculateButton.setDisable(false);
                 showInfoAlert("Ready!", "You've reached " + TARGET_CREDITS + " credits! You can now calculate your GPA.");
             }
 
-            // Show success message
             showInfoAlert("Success", "Course added successfully!\nTotal credits: " + totalCredits + " / " + TARGET_CREDITS);
 
         } catch (NumberFormatException e) {
@@ -93,10 +90,10 @@ public class CalculatorController {
                 return;
             }
 
-            // Calculate actual GPA
+
             double gpa = calculateRealGPA();
 
-            // Show results in an alert (since you don't have result screen yet)
+
             showGPAResults(gpa);
 
         } catch (Exception e) {
@@ -138,42 +135,17 @@ public class CalculatorController {
     }
 
     private void showGPAResults(double gpa) {
-        // Create formatted results
-        StringBuilder results = new StringBuilder();
-        results.append("🎓 GPA CALCULATION RESULTS 🎓\n\n");
-        results.append("Overall GPA: ").append(String.format("%.2f", gpa)).append(" / 4.00\n");
-        results.append("Total Courses: ").append(courses.size()).append("\n");
-        results.append("Total Credits: ").append(totalCredits).append("\n\n");
+        try {
+            // Store data in ResultData
+            ResultData.setData(courses, gpa, totalCredits);
 
-        results.append("Course Details:\n");
-        results.append("----------------\n");
-        for (Course course : courses) {
-            results.append("• ").append(course.getCourseName())
-                    .append(" (").append(course.getCourseCode()).append(") - ")
-                    .append(course.getCredit()).append(" credits - Grade: ")
-                    .append(course.getGrade()).append("\n");
+            // Navigate to result scene
+            Main.showResultScene();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Cannot display results: " + e.getMessage());
         }
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("GPA Results");
-        alert.setHeaderText("Your GPA Calculation");
-        alert.setContentText(results.toString());
-
-        // Add option to go back to home
-        ButtonType backToHomeButton = new ButtonType("Back to Home");
-        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(backToHomeButton, closeButton);
-
-        // Handle button actions
-        alert.showAndWait().ifPresent(buttonType -> {
-            if (buttonType == backToHomeButton) {
-                try {
-                    Main.showHomeScene();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void clearFields() {
