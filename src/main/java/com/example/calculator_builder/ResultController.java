@@ -1,21 +1,17 @@
 package com.example.calculator_builder;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.collections.ObservableList;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class ResultController implements Initializable {
 
-    public Button newCalculationButton;
+    // TableView and columns
     @FXML private TableView<Course> coursesTable;
     @FXML private TableColumn<Course, String> courseNameColumn;
     @FXML private TableColumn<Course, String> codeColumn;
@@ -23,193 +19,62 @@ public class ResultController implements Initializable {
     @FXML private TableColumn<Course, String> gradeColumn;
     @FXML private TableColumn<Course, String> instructorsColumn;
 
+    // Labels
     @FXML private Label gpaLabel;
     @FXML private Label performanceLabel;
     @FXML private Label totalCoursesCountLabel;
     @FXML private Label totalCreditsLabel;
 
-//    @FXML private Button newCalculationButton;
-//    @FXML private Button backToHomeButton;
+    // Buttons
+    @FXML private Button newCalculationButton;
+    @FXML private Button backToHomeButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("=== RESULT CONTROLLER INITIALIZED ===");
-
-
-        debugFXMLInjection();
-
-        setupTableView();
-        debugTableState();
-        loadData();
+        setupTableColumns();
+        displayData();
     }
 
-    private void debugFXMLInjection() {
-        System.out.println("=== FXML INJECTION DEBUG ===");
-        System.out.println("coursesTable: " + (coursesTable != null ? "INJECTED" : "NULL"));
-        System.out.println("courseNameColumn: " + (courseNameColumn != null ? "INJECTED" : "NULL"));
-        System.out.println("codeColumn: " + (codeColumn != null ? "INJECTED" : "NULL"));
-        System.out.println("creditsColumn: " + (creditsColumn != null ? "INJECTED" : "NULL"));
-        System.out.println("gradeColumn: " + (gradeColumn != null ? "INJECTED" : "NULL"));
-        System.out.println("instructorsColumn: " + (instructorsColumn != null ? "INJECTED" : "NULL"));
+    // Set up TableView columns
+    private void setupTableColumns() {
+        courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+        codeColumn.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+        creditsColumn.setCellValueFactory(new PropertyValueFactory<>("credit"));
+        gradeColumn.setCellValueFactory(new PropertyValueFactory<>("grade"));
+        instructorsColumn.setCellValueFactory(new PropertyValueFactory<>("teachers"));
+    }
 
-        if (coursesTable != null) {
-            System.out.println("TableView has " + coursesTable.getColumns().size() + " columns");
-            for (int i = 0; i < coursesTable.getColumns().size(); i++) {
-                TableColumn<?, ?> col = coursesTable.getColumns().get(i);
-                System.out.println("Column " + i + ": " + col.getText() + " (fx:id: " + (col.getId() != null ? col.getId() : "no fx:id") + ")");
-            }
+    // Populate TableView and Labels
+    private void displayData() {
+        ObservableList<Course> courses = ResultData.getCourses();
+        double gpa = ResultData.getGpa();
+        double totalCredits = ResultData.getTotalCredits();
+
+        if (courses.isEmpty()) {
+            showEmptyState();
+            return;
         }
+
+        // Fill the TableView
+        coursesTable.setItems(courses);
+
+        // Update labels
+        gpaLabel.setText(String.format("%.2f", gpa));
+        totalCoursesCountLabel.setText(String.valueOf(courses.size()));
+        totalCreditsLabel.setText(String.format("%.1f", totalCredits));
+        performanceLabel.setText(getPerformanceComment(gpa));
     }
 
-    private void setupTableView() {
-        System.out.println("=== SETTING UP TABLE VIEW ===");
-
-        try {
-
-            if (courseNameColumn != null) {
-                System.out.println("Using FXML injected columns with LAMBDA");
-                courseNameColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseName()));
-                codeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseCode()));
-                creditsColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCredit()).asObject());
-                gradeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getGrade()));
-                instructorsColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTeachers()));
-                System.out.println("FXML columns setup completed with LAMBDA");
-            }
-            else if (coursesTable != null && coursesTable.getColumns().size() >= 5) {
-                System.out.println("Setting up columns from TableView directly with LAMBDA");
-
-                TableColumn<Course, String> col1 = (TableColumn<Course, String>) coursesTable.getColumns().get(0);
-                TableColumn<Course, String> col2 = (TableColumn<Course, String>) coursesTable.getColumns().get(1);
-                TableColumn<Course, Integer> col3 = (TableColumn<Course, Integer>) coursesTable.getColumns().get(2);
-                TableColumn<Course, String> col4 = (TableColumn<Course, String>) coursesTable.getColumns().get(3);
-                TableColumn<Course, String> col5 = (TableColumn<Course, String>) coursesTable.getColumns().get(4);
-
-
-                col1.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseName()));
-                col2.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseCode()));
-                col3.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCredit()).asObject());
-                col4.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getGrade()));
-                col5.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTeachers()));
-
-                System.out.println("TableView columns setup completed with LAMBDA expressions");
-            }
-
-            else if (coursesTable != null) {
-                System.out.println("Creating new columns programmatically with LAMBDA");
-                coursesTable.getColumns().clear();
-
-                TableColumn<Course, String> courseCol = new TableColumn<>("Course Name");
-                courseCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseName()));
-                courseCol.setPrefWidth(200);
-
-                TableColumn<Course, String> codeCol = new TableColumn<>("Code");
-                codeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseCode()));
-                codeCol.setPrefWidth(120);
-
-                TableColumn<Course, Integer> creditsCol = new TableColumn<>("Credits");
-                creditsCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCredit()).asObject());
-                creditsCol.setPrefWidth(80);
-
-                TableColumn<Course, String> gradeCol = new TableColumn<>("Grade");
-                gradeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getGrade()));
-                gradeCol.setPrefWidth(80);
-
-                TableColumn<Course, String> teachersCol = new TableColumn<>("Instructors");
-                teachersCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTeachers()));
-                teachersCol.setPrefWidth(200);
-
-                coursesTable.getColumns().add(courseCol);
-                coursesTable.getColumns().add(codeCol);
-                coursesTable.getColumns().add(creditsCol);
-                coursesTable.getColumns().add(gradeCol);
-                coursesTable.getColumns().add(teachersCol);
-
-                System.out.println("New columns created and added with LAMBDA");
-            }
-        } catch (Exception e) {
-            System.out.println("ERROR in setupTableView: " + e.getMessage());
-            Logger.getLogger(ResultController.class.getName()).log(Level.SEVERE, null, e);
-
-        }
-    }
-
-    private void debugTableState() {
-        System.out.println("=== TABLE STATE DEBUG ===");
-        if (coursesTable != null) {
-            System.out.println("Table items: " + coursesTable.getItems().size());
-            System.out.println("Table columns: " + coursesTable.getColumns().size());
-
-            for (int i = 0; i < coursesTable.getColumns().size(); i++) {
-                TableColumn<Course, ?> col = coursesTable.getColumns().get(i);
-                System.out.println("Column " + i + " '" + col.getText() + "' has cell factory: " + (col.getCellValueFactory() != null));
-            }
-
-            System.out.println("Table visible: " + coursesTable.isVisible());
-            System.out.println("Table managed: " + coursesTable.isManaged());
-        }
-    }
-
-    private void loadData() {
-        try {
-            System.out.println("=== LOADING DATA ===");
-
-            ObservableList<Course> courses = ResultData.getCourses();
-            double gpa = ResultData.getGpa();
-            double totalCredits = ResultData.getTotalCredits();
-
-            System.out.println("From ResultData - Courses: " + courses.size() + ", GPA: " + gpa + ", Credits: " + totalCredits);
-
-            if (courses.isEmpty()) {
-                System.out.println("NO COURSES FOUND IN RESULTDATA!");
-                showDefaultValues();
-                return;
-            }
-
-
-            System.out.println("=== COURSE DETAILS ===");
-            for (int i = 0; i < courses.size(); i++) {
-                Course course = courses.get(i);
-                System.out.println("Course " + i + ": " + course.getCourseName() +
-                        " | Code: " + course.getCourseCode() +
-                        " | Credits: " + course.getCredit() +
-                        " | Grade: " + course.getGrade() +
-                        " | Teacher1: " + course.getTeacher1() +
-                        " | Teacher2: " + course.getTeacher2() +
-                        " | Teachers: " + course.getTeachers());
-            }
-
-
-            System.out.println("Setting table items...");
-            coursesTable.setItems(courses);
-            System.out.println("Table items set. Table now has: " + coursesTable.getItems().size() + " items");
-
-
-            coursesTable.refresh();
-            System.out.println("Table refreshed");
-
-
-            gpaLabel.setText(String.format("%.2f", gpa));
-            totalCoursesCountLabel.setText(String.valueOf(courses.size()));
-            totalCreditsLabel.setText(String.format("%.1f", totalCredits));
-            performanceLabel.setText(getPerformanceComment(gpa));
-
-            System.out.println("=== DATA LOADING COMPLETE ===");
-
-        } catch (Exception e) {
-            System.out.println("ERROR in loadData: " + e.getMessage());
-            Logger.getLogger(ResultController.class.getName()).log(Level.SEVERE, null, e);
-
-            showDefaultValues();
-        }
-    }
-
-    private void showDefaultValues() {
+    // Reset display if no data
+    private void showEmptyState() {
         gpaLabel.setText("0.00");
         performanceLabel.setText("No data available");
         totalCoursesCountLabel.setText("0");
         totalCreditsLabel.setText("0.0");
+        coursesTable.getItems().clear();
     }
 
+    // Returns performance comment based on GPA
     private String getPerformanceComment(double gpa) {
         if (gpa >= 3.7) return "Excellent! First Class Performance 🏆";
         else if (gpa >= 3.3) return "Very Good! Keep up the good work 👍";
@@ -218,23 +83,22 @@ public class ResultController implements Initializable {
         else return "Needs improvement. Consider academic support 📚";
     }
 
+    // Button Handlers
     @FXML
     private void handleNewCalculation() {
         try {
-            Main.showCalculatorScene();
+            Main.showCalculatorScene();  // Go back to calculator scene
         } catch (Exception e) {
-            Logger.getLogger(ResultController.class.getName()).log(Level.SEVERE, null, e);
-
+            e.printStackTrace();
         }
     }
 
     @FXML
     private void handleBackToHome() {
         try {
-            Main.showHomeScene();
+            Main.showHomeScene();  // Go back to home scene
         } catch (Exception e) {
-            Logger.getLogger(ResultController.class.getName()).log(Level.SEVERE, null, e);
-
+            e.printStackTrace();
         }
     }
 }

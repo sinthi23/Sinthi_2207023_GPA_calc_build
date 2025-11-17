@@ -7,33 +7,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.calculator_builder.HomeController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calculator_builder.HomeController">
 
     <children>
-        <VBox alignment="CENTER" layoutY="75.0"
-              prefHeight="199.0" prefWidth="600.0"
-              spacing="20.0">
+        <VBox alignment="CENTER" layoutY="75.0" prefHeight="199.0" prefWidth="600.0" spacing="20.0" style="-fx-background-color: #FFE4E1;">
 
             <padding>
-                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
 
             <children>
-                <Label text="Welcome to GPA calculator"
-                       prefHeight="69.0" prefWidth="309.0">
+                <Label prefHeight="69.0" prefWidth="309.0" text="Welcome to GPA calculator">
                     <font>
-                        <Font size="23.0"/>
+                        <Font size="23.0" />
                     </font>
                 </Label>
 
                 <!-- The button that will load Calculator.fxml -->
-                <Button fx:id="startButton"
-                        text="Start GPA Calculator"
-                        mnemonicParsing="false"
-                        onAction="#handleStartButton"/>
+                <Button fx:id="startButton" mnemonicParsing="false" onAction="#handleStartButton" style="-fx-background-color: #3498db;" text="Start GPA Calculator" />
             </children>
         </VBox>
     </children>

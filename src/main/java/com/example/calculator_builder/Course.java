@@ -17,16 +17,29 @@ public class Course {
         this.grade = grade;
     }
 
+    // REQUIRED GETTERS FOR TABLE COLUMNS:
 
-    public String getCourseName() { return courseName; }
-    public String getCourseCode() { return courseCode; }
-    public int getCredit() { return credit; }
-    public String getGrade() { return grade; }
+    // For "Course Name" column - must match PropertyValueFactory("courseName")
+    public String getCourseName() {
+        return courseName;
+    }
 
-    public String getTeacher1() { return teacher1 != null ? teacher1 : ""; }
-    public String getTeacher2() { return teacher2 != null ? teacher2 : ""; }
+    // For "Code" column - must match PropertyValueFactory("courseCode")
+    public String getCourseCode() {
+        return courseCode;
+    }
 
+    // For "Credits" column - must match PropertyValueFactory("credit")
+    public int getCredit() {
+        return credit;
+    }
 
+    // For "Grade" column - must match PropertyValueFactory("grade")
+    public String getGrade() {
+        return grade;
+    }
+
+    // For "Instructors" column - must match PropertyValueFactory("teachers")
     public String getTeachers() {
         if (teacher1 == null || teacher1.isEmpty()) {
             return "No instructor";
@@ -35,5 +48,27 @@ public class Course {
             return teacher1;
         }
         return teacher1 + ", " + teacher2;
+    }
+
+    // Optional: Additional getters for debugging
+    public String getTeacher1() {
+        return teacher1 != null ? teacher1 : "";
+    }
+
+    public String getTeacher2() {
+        return teacher2 != null ? teacher2 : "";
+    }
+
+    // For debugging
+    @Override
+    public String toString() {
+        return "Course{" +
+                "courseName='" + courseName + '\'' +
+                ", courseCode='" + courseCode + '\'' +
+                ", credit=" + credit +
+                ", teacher1='" + teacher1 + '\'' +
+                ", teacher2='" + teacher2 + '\'' +
+                ", grade='" + grade + '\'' +
+                '}';
     }
 }

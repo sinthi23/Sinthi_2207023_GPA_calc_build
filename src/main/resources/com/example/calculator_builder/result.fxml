@@ -176,9 +176,9 @@
                                     </padding>
 
 
-                                        <Button fx:id="newCalculationButton" mnemonicParsing="false" onAction="#handleNewCalculation" prefWidth="150.0" text="New Calculation" />
+                                        <Button fx:id="newCalculationButton" mnemonicParsing="false" onAction="#handleNewCalculation" prefWidth="150.0" style="-fx-background-color: #3498db;" text="New Calculation" />
 
-                                        <Button fx:id="backToHomeButton" mnemonicParsing="false" onAction="#handleBackToHome" prefWidth="150.0" text="Back to Home" />
+                                        <Button fx:id="backToHomeButton" mnemonicParsing="false" onAction="#handleBackToHome" prefWidth="150.0" style="-fx-background-color: #3498db;" text="Back to Home" />
 
                                 </HBox>
 
