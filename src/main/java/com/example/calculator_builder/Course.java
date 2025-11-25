@@ -1,6 +1,7 @@
 package com.example.calculator_builder;
 
 public class Course {
+    private Integer id; // DB primary key, null if not persisted
     private final String courseName;
     private final String courseCode;
     private final int credit;
@@ -8,13 +9,18 @@ public class Course {
     private final String teacher2;
     private final String grade;
 
-    public Course(String courseName, String courseCode, int credit, String teacher1, String teacher2, String grade) {
+    public Course(Integer id, String courseName, String courseCode, int credit, String teacher1, String teacher2, String grade) {
+        this.id = id;
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.credit = credit;
         this.teacher1 = teacher1;
         this.teacher2 = teacher2;
         this.grade = grade;
+    }
+
+    public Course(String courseName, String courseCode, int credit, String teacher1, String teacher2, String grade) {
+        this(null, courseName, courseCode, credit, teacher1, teacher2, grade);
     }
 
     // REQUIRED GETTERS FOR TABLE COLUMNS:
@@ -32,6 +38,14 @@ public class Course {
     // For "Credits" column - must match PropertyValueFactory("credit")
     public int getCredit() {
         return credit;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     // For "Grade" column - must match PropertyValueFactory("grade")

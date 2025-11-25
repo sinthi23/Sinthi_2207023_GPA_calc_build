@@ -2,8 +2,12 @@ package com.example.calculator_builder;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.application.Platform;
 
 public class CalculatorController {
 
@@ -15,10 +19,18 @@ public class CalculatorController {
     @FXML private ComboBox<String> gradeComboBox;
     @FXML private Button addCourseButton;
     @FXML private Button calculateButton;
+    @FXML private TableView<Course> courseTable;
+    @FXML private TableColumn<Course, String> courseNameColumn;
+    @FXML private TableColumn<Course, String> courseCodeColumn;
+    @FXML private TableColumn<Course, Integer> creditColumn;
+    @FXML private TableColumn<Course, String> teachersColumn;
+    @FXML private TableColumn<Course, String> gradeColumn;
+    @FXML private TableColumn<Course, Void> actionColumn;
 
 
 
     private ObservableList<Course> courses = FXCollections.observableArrayList();
+    private Course editingCourse = null;
     private double totalCredits = 0;
     private final double TARGET_CREDITS = 15.0;
 
@@ -35,6 +47,57 @@ public class CalculatorController {
 
 
         calculateButton.setDisable(true);
+
+        // Setup table columns
+        courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+        courseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+        creditColumn.setCellValueFactory(new PropertyValueFactory<>("credit"));
+        teachersColumn.setCellValueFactory(new PropertyValueFactory<>("teachers"));
+        gradeColumn.setCellValueFactory(new PropertyValueFactory<>("grade"));
+
+        courseTable.setItems(courses);
+
+        // Actions column
+        actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button editButton = new Button("Edit");
+            private final Button deleteButton = new Button("Delete");
+            {
+                editButton.setOnAction(e -> {
+                    Course c = getTableView().getItems().get(getIndex());
+                    populateFormForEdit(c);
+                });
+                deleteButton.setOnAction(e -> {
+                    Course c = getTableView().getItems().get(getIndex());
+                    deleteCourse(c);
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    HBox box = new HBox(5, editButton, deleteButton);
+                    setGraphic(box);
+                }
+            }
+        });
+
+        // Initialize DB and load existing courses
+        Task<Void> initTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Database.initDatabase();
+                java.util.List<Course> list = Database.getAllCourses();
+                Platform.runLater(() -> {
+                    courses.setAll(list);
+                    totalCredits = courses.stream().mapToDouble(Course::getCredit).sum();
+                    if (totalCredits >= TARGET_CREDITS) calculateButton.setDisable(false);
+                });
+                return null;
+            }
+        };
+        new Thread(initTask).start();
     }
 
     @FXML
@@ -59,8 +122,24 @@ public class CalculatorController {
             }
 
 
-            Course course = new Course(courseName, courseCode, (int) credit, teacher1, teacher2, grade);
-            courses.add(course);
+
+            Course course = null;
+            if (editingCourse != null) {
+                // update existing
+                course = new Course(editingCourse.getId(), courseName, courseCode, (int) credit, teacher1, teacher2, grade);
+                updateCourseToDb(course);
+                int idx = courses.indexOf(editingCourse);
+                if (idx >= 0) courses.set(idx, course);
+                editingCourse = null;
+                addCourseButton.setText("Add Course");
+            } else {
+                // insert new
+                course = new Course(courseName, courseCode, (int) credit, teacher1, teacher2, grade);
+                insertCourseToDb(course);
+                courses.add(course);
+            }
+            // recalc credits
+            totalCredits = courses.stream().mapToDouble(Course::getCredit).sum();
 
             totalCredits += credit;
 
@@ -80,6 +159,62 @@ public class CalculatorController {
         } catch (Exception e) {
             showAlert("Error", "Please check your input values: " + e.getMessage());
         }
+    }
+
+    private void populateFormForEdit(Course c) {
+        editingCourse = c;
+        courseNameField.setText(c.getCourseName());
+        courseCodeField.setText(c.getCourseCode());
+        creditField.setText(String.valueOf(c.getCredit()));
+        teacher1Field.setText(c.getTeacher1());
+        teacher2Field.setText(c.getTeacher2());
+        gradeComboBox.setValue(c.getGrade());
+        addCourseButton.setText("Update Course");
+    }
+
+    private void insertCourseToDb(Course course) {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Database.insertCourse(course);
+                return null;
+            }
+        };
+        new Thread(task).start();
+    }
+
+    private void updateCourseToDb(Course course) {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Database.updateCourse(course);
+                return null;
+            }
+        };
+        new Thread(task).start();
+    }
+
+    private void deleteCourse(Course course) {
+        // confirm
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete");
+        alert.setContentText("Delete course: " + course.getCourseName() + "?");
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                Task<Void> task = new Task<>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        Database.deleteCourse(course.getId());
+                        Platform.runLater(() -> {
+                            courses.remove(course);
+                            totalCredits = courses.stream().mapToDouble(Course::getCredit).sum();
+                        });
+                        return null;
+                    }
+                };
+                new Thread(task).start();
+            }
+        });
     }
 
     @FXML

@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 
 <VBox spacing="15.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calculator_builder.CalculatorController">
         <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="450.0" prefWidth="600.0">
@@ -25,19 +27,20 @@
                 </Label>
             </top>
             <center>
-                <GridPane hgap="10.0" maxHeight="250.0" minHeight="250.0" prefHeight="250.0" prefWidth="600.0" vgap="10.0" BorderPane.alignment="CENTER">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                    </rowConstraints>
+                <VBox spacing="10.0" BorderPane.alignment="CENTER">
+                    <GridPane hgap="10.0" maxHeight="250.0" minHeight="250.0" prefHeight="250.0" prefWidth="600.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        </rowConstraints>
 
                     <Label text="Course name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                     <TextField fx:id="courseNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
@@ -60,7 +63,19 @@
                     <padding>
                         <Insets bottom="20" left="20" right="20" top="20" />
                     </padding>
-                </GridPane>
+                    </GridPane>
+                    <!-- TableView for CRUD operations -->
+                    <TableView fx:id="courseTable" prefHeight="250.0" prefWidth="600.0">
+                        <columns>
+                            <TableColumn fx:id="courseNameColumn" text="Course Name" />
+                            <TableColumn fx:id="courseCodeColumn" text="Code" />
+                            <TableColumn fx:id="creditColumn" text="Credits" />
+                            <TableColumn fx:id="teachersColumn" text="Instructors" />
+                            <TableColumn fx:id="gradeColumn" text="Grade" />
+                            <TableColumn fx:id="actionColumn" text="Actions" />
+                        </columns>
+                    </TableView>
+                </VBox>
             </center>
             <bottom>
                 <VBox prefWidth="80.0" spacing="10.0" BorderPane.alignment="CENTER">
