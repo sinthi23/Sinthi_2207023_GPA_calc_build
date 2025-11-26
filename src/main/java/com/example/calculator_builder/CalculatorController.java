@@ -11,22 +11,36 @@ import javafx.application.Platform;
 
 public class CalculatorController {
 
-    @FXML private TextField courseNameField;
-    @FXML private TextField courseCodeField;
-    @FXML private TextField creditField;
-    @FXML private TextField teacher1Field;
-    @FXML private TextField teacher2Field;
-    @FXML private ComboBox<String> gradeComboBox;
-    @FXML private Button addCourseButton;
-    @FXML private Button calculateButton;
-    @FXML private TableView<Course> courseTable;
-    @FXML private TableColumn<Course, String> courseNameColumn;
-    @FXML private TableColumn<Course, String> courseCodeColumn;
-    @FXML private TableColumn<Course, Integer> creditColumn;
-    @FXML private TableColumn<Course, String> teachersColumn;
-    @FXML private TableColumn<Course, String> gradeColumn;
-    @FXML private TableColumn<Course, Void> actionColumn;
-
+    @FXML
+    private TextField courseNameField;
+    @FXML
+    private TextField courseCodeField;
+    @FXML
+    private TextField creditField;
+    @FXML
+    private TextField teacher1Field;
+    @FXML
+    private TextField teacher2Field;
+    @FXML
+    private ComboBox<String> gradeComboBox;
+    @FXML
+    private Button addCourseButton;
+    @FXML
+    private Button calculateButton;
+    @FXML
+    private TableView<Course> courseTable;
+    @FXML
+    private TableColumn<Course, String> courseNameColumn;
+    @FXML
+    private TableColumn<Course, String> courseCodeColumn;
+    @FXML
+    private TableColumn<Course, Integer> creditColumn;
+    @FXML
+    private TableColumn<Course, String> teachersColumn;
+    @FXML
+    private TableColumn<Course, String> gradeColumn;
+    @FXML
+    private TableColumn<Course, Void> actionColumn;
 
 
     private ObservableList<Course> courses = FXCollections.observableArrayList();
@@ -44,8 +58,6 @@ public class CalculatorController {
         ));
 
 
-
-
         calculateButton.setDisable(true);
 
         // Setup table columns
@@ -61,6 +73,7 @@ public class CalculatorController {
         actionColumn.setCellFactory(col -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
             private final Button deleteButton = new Button("Delete");
+
             {
                 editButton.setOnAction(e -> {
                     Course c = getTableView().getItems().get(getIndex());
@@ -71,6 +84,7 @@ public class CalculatorController {
                     deleteCourse(c);
                 });
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -120,7 +134,6 @@ public class CalculatorController {
                 showAlert("Error", "Please select a grade");
                 return;
             }
-
 
 
             Course course = null;
@@ -253,19 +266,32 @@ public class CalculatorController {
 
     private double convertGradeToPoints(String grade) {
         switch (grade) {
-            case "A+": return 4.0;
-            case "A": return 4.0;
-            case "A-": return 3.7;
-            case "B+": return 3.3;
-            case "B": return 3.0;
-            case "B-": return 2.7;
-            case "C+": return 2.3;
-            case "C": return 2.0;
-            case "C-": return 1.7;
-            case "D+": return 1.3;
-            case "D": return 1.0;
-            case "F": return 0.0;
-            default: return 0.0;
+            case "A+":
+                return 4.0;
+            case "A":
+                return 4.0;
+            case "A-":
+                return 3.7;
+            case "B+":
+                return 3.3;
+            case "B":
+                return 3.0;
+            case "B-":
+                return 2.7;
+            case "C+":
+                return 2.3;
+            case "C":
+                return 2.0;
+            case "C-":
+                return 1.7;
+            case "D+":
+                return 1.3;
+            case "D":
+                return 1.0;
+            case "F":
+                return 0.0;
+            default:
+                return 0.0;
         }
     }
 
