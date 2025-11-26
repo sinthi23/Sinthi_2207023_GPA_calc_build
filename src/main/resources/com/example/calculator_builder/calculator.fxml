@@ -88,7 +88,7 @@
             <VBox alignment="CENTER" spacing="10">
                 <Button fx:id="addCourseButton" onAction="#handleAddCourse" prefWidth="150" style="-fx-background-color: #0033A0; -fx-text-fill: white" text="Add Course" />
 
-                <Button fx:id="calculateButton" disable="true" onAction="#handleCalculateGPA" prefWidth="150" style="-fx-background-color: #3498db; -fx-text-fill: white" />
+                <Button fx:id="calculateButton" disable="true" onAction="#handleCalculateGPA" prefWidth="150" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Calculate GPA" />
 
                 <padding>
                     <Insets bottom="20" top="10" />
